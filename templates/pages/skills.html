@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Skills - {{ site_settings.site_name|default:"My Portfolio" }}{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">My <span>Skills</span></h2>
+            <p class="section-subtitle">Technologies and tools I work with</p>
+        </div>
+        
+        {% for category in skill_categories|default:"" %}
+        <div class="mb-5">
+            <h4 class="mb-3"><i class="{{ category.icon|default:'fas fa-code' }} text-primary me-2"></i> {{ category.name }}</h4>
+            <div class="row">
+                {% for skill in category.skills.all %}
+                <div class="col-md-6" data-aos="fade-up">
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">{{ skill.name }}</span>
+                            <span class="skill-percent">{{ skill.proficiency }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 aria-valuenow="{{ skill.proficiency }}" 
+                                 aria-valuemin="0" aria-valuemax="100"
+                                 style="width: 0%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="fas fa-cogs fa-4x text-muted mb-3"></i>
+            <h3>Skills Coming Soon</h3>
+            <p class="text-muted">My technical skills will be displayed here.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

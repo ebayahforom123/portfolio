@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - {{ site_settings.site_name|default:"My Portfolio" }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1>Hi, I'm a<br>Full Stack Developer</h1>
+                <p class="lead">{{ site_settings.tagline|default:"I build beautiful, responsive, and functional web applications." }}</p>
+                <div class="hero-buttons">
+                    <a href="{% url 'portfolio:projects' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-code me-2"></i> View My Work
+                    </a>
+                    <a href="{% url 'portfolio:contact' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-envelope me-2"></i> Contact Me
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                {% if site_settings.profile_image %}
+                <img src="{{ site_settings.profile_image.url }}" alt="Profile" 
+                     class="img-fluid rounded-circle shadow-lg" 
+                     style="max-width: 350px; border: 5px solid rgba(255,255,255,0.2);">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Preview -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">What I <span>Do</span></h2>
+            <p class="section-subtitle">I offer a complete range of web development services</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="card text-center p-4">
+                    <i class="fas fa-laptop-code fa-3x text-primary mb-3"></i>
+                    <h5>Web Development</h5>
+                    <p class="text-muted small">Custom websites and web applications built with latest technologies</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="card text-center p-4">
+                    <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+                    <h5>Responsive Design</h5>
+                    <p class="text-muted small">Mobile-first designs that look stunning on all devices</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="card text-center p-4">
+                    <i class="fas fa-database fa-3x text-primary mb-3"></i>
+                    <h5>Backend Development</h5>
+                    <p class="text-muted small">Robust APIs, databases, and server-side solutions</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="card text-center p-4">
+                    <i class="fas fa-cloud fa-3x text-primary mb-3"></i>
+                    <h5>DevOps & Cloud</h5>
+                    <p class="text-muted small">Deployment, scaling, and cloud infrastructure</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured <span>Projects</span></h2>
+            <p class="section-subtitle">Some of my recent work that I'm proud of</p>
+        </div>
+        <div class="row g-4">
+            {% for project in featured_projects|default:"" %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="card">
+                    {% if project.featured_image %}
+                    <img src="{{ project.featured_image.url }}" class="card-img-top" alt="{{ project.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text">{{ project.short_description }}</p>
+                        <a href="{{ project.get_absolute_url }}" class="btn btn-outline-primary btn-sm rounded-pill">
+                            View Details <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Projects coming soon!</p>
+                <a href="{% url 'portfolio:projects' %}" class="btn btn-primary rounded-pill">View All Projects</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-padding" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container text-center">
+        <h2 class="text-white mb-3">Let's Work Together</h2>
+        <p class="lead text-white mb-4 opacity-75">I'm currently available for freelance work and interesting projects.</p>
+        <a href="{% url 'portfolio:contact' %}" class="btn btn-light btn-lg rounded-pill">
+            <i class="fas fa-paper-plane me-2"></i> Get In Touch
+        </a>
+    </div>
+</section>
+{% endblock %}

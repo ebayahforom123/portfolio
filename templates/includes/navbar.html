@@ -1,0 +1,77 @@
+{% load static %}
+{% url 'portfolio:home' as home_url %}
+{% url 'portfolio:about' as about_url %}
+{% url 'portfolio:projects' as projects_url %}
+{% url 'blog:post_list' as blog_url %}
+{% url 'contact:contact' as contact_url %}
+
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{{ home_url }}">
+            {% if site_settings.profile_image %}
+            <img src="{{ site_settings.profile_image.url }}"
+                 alt="{{ site_settings.site_name }}"
+                 class="rounded-circle me-2"
+                 style="width: 40px; height: 40px; object-fit: cover;">
+            {% endif %}
+            {{ site_settings.site_name }}
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarMain" aria-controls="navbarMain"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == home_url %}active{% endif %}"
+                       href="{{ home_url }}">
+                        <i class="fas fa-home me-1"></i> Home
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == about_url %}active{% endif %}"
+                       href="{{ about_url }}">
+                        <i class="fas fa-user me-1"></i> About
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == projects_url %}active{% endif %}"
+                       href="{{ projects_url }}">
+                        <i class="fas fa-code me-1"></i> Projects
+                    </a>
+                </li>
+
+                {% if blog_enabled %}
+                <li class="nav-item">
+                    <a class="nav-link {% if blog_url in request.path %}active{% endif %}"
+                       href="{{ blog_url }}">
+                        <i class="fas fa-blog me-1"></i> Blog
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == contact_url %}active{% endif %}"
+                       href="{{ contact_url }}">
+                        <i class="fas fa-envelope me-1"></i> Contact
+                    </a>
+                </li>
+
+                {% if site_settings.resume %}
+                <li class="nav-item ms-lg-3">
+                    <a href="{{ site_settings.resume.url }}"
+                       class="btn btn-primary btn-sm rounded-pill px-3"
+                       target="_blank">
+                        <i class="fas fa-download me-1"></i> Resume
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

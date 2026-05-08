@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Experience - {{ site_settings.site_name|default:"My Portfolio" }}{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Work <span>Experience</span></h2>
+            <p class="section-subtitle">My professional journey</p>
+        </div>
+        
+        {% for experience in experiences|default:"" %}
+        <div class="card mb-4 p-4" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-start flex-wrap">
+                <div>
+                    <h4 class="fw-bold">{{ experience.position }}</h4>
+                    <h5 class="text-primary">{{ experience.company }}</h5>
+                </div>
+                <span class="badge bg-primary rounded-pill">{{ experience.get_duration_display }}</span>
+            </div>
+            <div class="mt-3">
+                {{ experience.description|safe }}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="fas fa-briefcase fa-4x text-muted mb-3"></i>
+            <h3>Experience Coming Soon</h3>
+            <p class="text-muted">My work experience will be displayed here.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

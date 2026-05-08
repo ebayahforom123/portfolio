@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}About - {{ site_settings.site_name|default:"My Portfolio" }}{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">About <span>Me</span></h2>
+            <p class="section-subtitle">Get to know me better</p>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-5 text-center mb-4 mb-lg-0" data-aos="fade-right">
+                {% if site_settings.profile_image %}
+                <img src="{{ site_settings.profile_image.url }}" alt="Profile" 
+                     class="img-fluid rounded-4 shadow-lg" style="max-width: 400px;">
+                {% endif %}
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <h3 class="fw-bold mb-3">{{ site_settings.site_name|default:"About Me" }}</h3>
+                <div class="lead">
+                    {{ site_settings.about_me|safe|default:"<p>I'm a passionate full-stack developer with experience in building web applications using modern technologies.</p>" }}
+                </div>
+                
+                <div class="row mt-4">
+                    {% if site_settings.location %}
+                    <div class="col-md-6 mb-3">
+                        <p><i class="fas fa-map-marker-alt text-primary me-2"></i> <strong>Location:</strong> {{ site_settings.location }}</p>
+                    </div>
+                    {% endif %}
+                    {% if site_settings.email %}
+                    <div class="col-md-6 mb-3">
+                        <p><i class="fas fa-envelope text-primary me-2"></i> <strong>Email:</strong> {{ site_settings.email }}</p>
+                    </div>
+                    {% endif %}
+                    {% if site_settings.availability %}
+                    <div class="col-md-6 mb-3">
+                        <p><i class="fas fa-clock text-primary me-2"></i> <strong>Status:</strong> {{ site_settings.availability }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if site_settings.resume %}
+                <a href="{{ site_settings.resume.url }}" class="btn btn-primary rounded-pill mt-3" download>
+                    <i class="fas fa-download me-2"></i> Download Resume
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

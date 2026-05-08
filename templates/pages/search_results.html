@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Search - {{ site_settings.site_name|default:"My Portfolio" }}{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title mb-4">Search Results</h2>
+        
+        {% if query %}
+        <p class="mb-4">Showing results for: <strong>"{{ query }}"</strong></p>
+        {% endif %}
+        
+        {% if projects %}
+        <div class="row g-4">
+            {% for project in projects %}
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h5>
+                        <p class="text-muted">{{ project.short_description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <h3>No Results Found</h3>
+            <p class="text-muted">Try different keywords or browse the projects page.</p>
+            <a href="{% url 'portfolio:projects' %}" class="btn btn-primary rounded-pill">Browse Projects</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

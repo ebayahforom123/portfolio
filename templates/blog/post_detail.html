@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Blog{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <article class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="fw-bold mb-3">{{ post.title }}</h1>
+                <div class="mb-4 text-muted">
+                    <i class="far fa-calendar me-2"></i> {{ post.published_at|date:"F d, Y" }}
+                    <span class="mx-2">|</span>
+                    <i class="far fa-clock me-2"></i> {{ post.reading_time }} min read
+                </div>
+                
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="img-fluid rounded-4 mb-4" alt="{{ post.title }}">
+                {% endif %}
+                
+                <div class="content">
+                    {{ post.content|safe }}
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}

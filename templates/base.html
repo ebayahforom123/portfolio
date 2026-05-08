@@ -1,0 +1,853 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}{{ site_settings.site_name|default:"My Portfolio" }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ site_settings.site_description|default:"Professional portfolio showcasing my work and skills" }}{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}portfolio, developer, django, python, full stack{% endblock %}">
+    <meta name="author" content="{{ site_settings.site_name|default:"Developer" }}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ site_settings.site_name|default:"My Portfolio" }}">
+    <meta property="og:description" content="{{ site_settings.site_description|default:"Professional portfolio" }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if site_settings.profile_image %}
+    <meta property="og:image" content="{{ request.build_absolute_uri }}{{ site_settings.profile_image.url }}">
+    {% endif %}
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ site_settings.site_name|default:"My Portfolio" }}">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Favicon -->
+    {% if site_settings.favicon %}
+    <link rel="icon" href="{{ site_settings.favicon.url }}">
+    {% else %}
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    {% endif %}
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #06b6d4;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--gray-700);
+            background: var(--white);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* ========== NAVIGATION ========== */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            padding: 16px 0;
+            transition: var(--transition);
+            z-index: 1030;
+        }
+        
+        .navbar.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        
+        .navbar-brand img {
+            width: 38px;
+            height: 38px;
+            object-fit: cover;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--primary);
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--gray-600) !important;
+            padding: 10px 18px !important;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+            position: relative;
+            font-size: 0.95rem;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary) !important;
+            background: rgba(37, 99, 235, 0.08);
+        }
+        
+        .nav-link i {
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+        
+        .navbar-toggler {
+            border: none;
+            padding: 8px;
+            border-radius: var(--radius-md);
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: var(--white);
+                padding: 20px;
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-xl);
+                margin-top: 15px;
+            }
+            .nav-link {
+                padding: 12px 20px !important;
+                margin: 3px 0;
+            }
+        }
+        
+        /* ========== HERO SECTION ========== */
+        .hero-section {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 40%, #1e40af 100%);
+            padding: 120px 0 100px;
+            position: relative;
+            overflow: hidden;
+            color: var(--white);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            right: -100px;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -100px;
+            left: -50px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+        
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 1.2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero-section .lead {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.15s both;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+        
+        /* ========== BUTTONS ========== */
+        .btn {
+            padding: 12px 28px;
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .btn:hover::after { opacity: 1; }
+        .btn:active { transform: scale(0.97); }
+        
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+        }
+        
+        .btn-light {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--white);
+        }
+        
+        .btn-light:hover {
+            background: transparent;
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-outline-light {
+            border: 2px solid rgba(255,255,255,0.5);
+            color: var(--white);
+            background: transparent;
+        }
+        
+        .btn-outline-light:hover {
+            background: var(--white);
+            color: var(--primary);
+            border-color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-lg {
+            padding: 16px 36px;
+            font-size: 1.05rem;
+        }
+        
+        /* ========== SECTIONS ========== */
+        .section-padding {
+            padding: 80px 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .section-title span {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ========== CARDS ========== */
+        .card {
+            border: none;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .card-img-top {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .card-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--gray-900);
+        }
+        
+        .card-text {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* ========== SKILL BARS ========== */
+        .skill-item {
+            margin-bottom: 25px;
+        }
+        
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .skill-name { color: var(--gray-700); }
+        .skill-percent { color: var(--primary); }
+        
+        .progress {
+            height: 10px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-full);
+            transition: width 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* ========== FOOTER ========== */
+        .footer {
+            background: var(--dark);
+            color: var(--gray-400);
+            padding: 60px 0 30px;
+        }
+        
+        .footer h5 {
+            color: var(--white);
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+            padding-left: 8px;
+        }
+        
+        .footer-links a i {
+            font-size: 0.7rem;
+            margin-right: 8px;
+            transition: margin 0.3s;
+        }
+        
+        .footer-links a:hover i {
+            margin-right: 12px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .social-link {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.08);
+            border-radius: var(--radius-full);
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+        
+        .social-link:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 25px;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        /* ========== BACK TO TOP ========== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: var(--transition);
+            z-index: 999;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+        
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px) !important;
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.5);
+        }
+        
+        /* ========== ALERTS ========== */
+        .toast-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 1060;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-lg);
+            font-weight: 500;
+            animation: slideInRight 0.4s ease;
+        }
+        
+        /* ========== ANIMATIONS ========== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--gray-100); }
+        ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: var(--radius-full); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+        
+        /* ========== SELECTION ========== */
+        ::selection {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .hero-section h1 { font-size: 3rem; }
+        }
+        
+        @media (max-width: 991px) {
+            .hero-section { padding: 100px 0 80px; text-align: center; }
+            .hero-section h1 { font-size: 2.5rem; }
+            .hero-buttons { justify-content: center; }
+            .hero-section::before, .hero-section::after { display: none; }
+            .section-title { font-size: 2rem; }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2.2rem; }
+            .section-padding { padding: 60px 0; }
+            .hero-buttons { flex-direction: column; }
+            .hero-buttons .btn { width: 100%; text-align: center; justify-content: center; }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-section { padding: 80px 0 60px; }
+            .hero-section h1 { font-size: 1.8rem; }
+            .section-title { font-size: 1.7rem; }
+            .back-to-top { bottom: 20px; right: 20px; width: 42px; height: 42px; }
+            .navbar-brand { font-size: 1.3rem; }
+        }
+        
+        /* ========== PRINT ========== */
+        @media print {
+            .navbar, .footer, .back-to-top, .hero-section::before, .hero-section::after { display: none !important; }
+            body { padding-top: 0; }
+            .hero-section { background: none !important; color: #000 !important; padding: 20px 0; }
+        }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'portfolio:home' %}">
+                {% if site_settings.profile_image %}
+                <img src="{{ site_settings.profile_image.url }}" alt="Logo">
+                {% endif %}
+                {{ site_settings.site_name|default:"My Portfolio" }}
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarMain" aria-controls="navbarMain" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+                           href="{% url 'portfolio:home' %}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" 
+                           href="{% url 'portfolio:about' %}">
+                            <i class="fas fa-user"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'projects' %}active{% endif %}" 
+                           href="{% url 'portfolio:projects' %}">
+                            <i class="fas fa-briefcase"></i> Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'skills' %}active{% endif %}" 
+                           href="{% url 'portfolio:skills' %}">
+                            <i class="fas fa-cogs"></i> Skills
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'experience' %}active{% endif %}" 
+                           href="{% url 'portfolio:experience' %}">
+                            <i class="fas fa-chart-line"></i> Experience
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" 
+                           href="{% url 'portfolio:contact' %}">
+                            <i class="fas fa-envelope"></i> Contact
+                        </a>
+                    </li>
+                    {% if site_settings.resume %}
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                        <a href="{{ site_settings.resume.url }}" class="btn btn-primary btn-sm rounded-pill px-3" download>
+                            <i class="fas fa-download me-1"></i> Resume
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- ==================== MESSAGES ==================== -->
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                {% elif message.tags == 'error' or message.tags == 'danger' %}
+                    <i class="fas fa-times-circle text-danger fa-lg me-2"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle text-warning fa-lg me-2"></i>
+                {% else %}
+                    <i class="fas fa-info-circle text-info fa-lg me-2"></i>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Brand -->
+                <div class="col-lg-4 col-md-6">
+                    <h5>{{ site_settings.site_name|default:"My Portfolio" }}</h5>
+                    <p class="mb-3">{{ site_settings.short_bio|default:"Full Stack Developer"|truncatewords:25 }}</p>
+                    
+                    {% if site_settings.github or site_settings.linkedin or site_settings.twitter %}
+                    <div class="social-links">
+                        {% if site_settings.github %}
+                        <a href="{{ site_settings.github }}" class="social-link" target="_blank" rel="noopener" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        {% endif %}
+                        {% if site_settings.linkedin %}
+                        <a href="{{ site_settings.linkedin }}" class="social-link" target="_blank" rel="noopener" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        {% endif %}
+                        {% if site_settings.twitter %}
+                        <a href="{{ site_settings.twitter }}" class="social-link" target="_blank" rel="noopener" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                
+                <!-- Contact -->
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contact Info</h5>
+                    <ul class="footer-links">
+                        {% if site_settings.email %}
+                        <li>
+                            <i class="fas fa-envelope me-2"></i>
+                            <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a>
+                        </li>
+                        {% endif %}
+                        {% if site_settings.phone %}
+                        <li>
+                            <i class="fas fa-phone me-2"></i>
+                            <a href="tel:{{ site_settings.phone }}">{{ site_settings.phone }}</a>
+                        </li>
+                        {% endif %}
+                        {% if site_settings.location %}
+                        <li>
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            {{ site_settings.location }}
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                
+                <!-- CTA -->
+                <div class="col-lg-3 col-md-6">
+                    <h5>Let's Work</h5>
+                    <p class="mb-3">{{ site_settings.availability|default:"Available for new opportunities" }}</p>
+                    <a href="{% url 'portfolio:contact' %}" class="btn btn-primary btn-sm rounded-pill">
+                        <i class="fas fa-paper-plane me-2"></i> Get In Touch
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="mb-0">
+                    &copy; {% now "Y" %} {{ site_settings.site_name|default:"My Portfolio" }}. All rights reserved.
+                    <span class="mx-2">|</span>
+                    Built with <i class="fas fa-heart text-danger"></i> Django
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- ==================== BACK TO TOP ==================== -->
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+        
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+        
+        // Back to top
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            backToTop.classList.toggle('active', window.scrollY > 500);
+        });
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Auto dismiss alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                bootstrap.Alert.getOrCreateInstance(alert)?.close();
+            });
+        }, 5000);
+        
+        // Animate skill bars on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.progress-bar');
+                    bars.forEach(bar => {
+                        bar.style.width = bar.getAttribute('aria-valuenow') + '%';
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        document.querySelectorAll('.skill-item').forEach(item => observer.observe(item));
+        
+        console.log('%c🚀 Portfolio Ready %cBuilt with Django',
+            'background:#2563eb;color:white;padding:8px 12px;border-radius:6px 0 0 6px;font-weight:bold;',
+            'background:#0f172a;color:white;padding:8px 12px;border-radius:0 6px 6px 0;');
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

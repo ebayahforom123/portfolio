@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }} - {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'portfolio:home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'portfolio:projects' %}">Projects</a></li>
+                <li class="breadcrumb-item active">{{ project.title }}</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                {% if project.featured_image %}
+                <img src="{{ project.featured_image.url }}" class="img-fluid rounded-4 shadow mb-4" alt="{{ project.title }}">
+                {% endif %}
+                
+                <h1 class="fw-bold mb-3">{{ project.title }}</h1>
+                <p class="lead">{{ project.short_description }}</p>
+                
+                <div class="mt-4">
+                    {{ project.description|safe }}
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card p-4 sticky-top" style="top: 100px;">
+                    <h5 class="mb-3">Project Info</h5>
+                    <ul class="list-unstyled">
+                        {% if project.project_type %}
+                        <li class="mb-2"><strong>Type:</strong> {{ project.get_project_type_display }}</li>
+                        {% endif %}
+                        {% if project.status %}
+                        <li class="mb-2"><strong>Status:</strong> {{ project.get_status_display }}</li>
+                        {% endif %}
+                    </ul>
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" class="btn btn-primary rounded-pill" target="_blank">
+                            <i class="fas fa-external-link-alt me-2"></i> Live Demo
+                        </a>
+                        {% endif %}
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" class="btn btn-outline-dark rounded-pill" target="_blank">
+                            <i class="fab fa-github me-2"></i> Source Code
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
