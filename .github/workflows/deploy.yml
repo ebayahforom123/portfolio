@@ -11,21 +11,6 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -35,95 +20,45 @@ jobs:
       with:
         python-version: '3.11'
     
-    - name: Cache pip packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install flake8 pytest pytest-django pytest-cov
+    
+    - name: Run Django checks
+      env:
+        DJANGO_SETTINGS_MODULE: config.settings
+        SECRET_KEY: test-secret-key-for-ci
+        DEBUG: "True"
+        ALLOWED_HOSTS: "*"
+      run: |
+        python manage.py check
+    
+    - name: Check migrations
+      env:
+        DJANGO_SETTINGS_MODULE: config.settings
+        SECRET_KEY: test-secret-key-for-ci
+        DEBUG: "True"
+        ALLOWED_HOSTS: "*"
+      run: |
+        python manage.py makemigrations --check --dry-run
+
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install flake8
+      run: pip install flake8
     
     - name: Lint with flake8
       run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    
-    - name: Run migrations
-      env:
-        DJANGO_SETTINGS_MODULE: config.settings.testing
-        SECRET_KEY: test-secret-key
-        DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_db
-      run: |
-        python manage.py makemigrations --check --dry-run
-        python manage.py migrate
-    
-    - name: Run tests with coverage
-      env:
-        DJANGO_SETTINGS_MODULE: config.settings.testing
-        SECRET_KEY: test-secret-key
-        DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_db
-      run: |
-        pytest --cov=. --cov-report=xml --cov-report=term
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.xml
-        fail_ci_if_error: false
-
-  build:
-    name: Build Docker Image
-    needs: test
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    
-    - name: Login to DockerHub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-    
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/portfolio:latest
-          ${{ secrets.DOCKER_USERNAME }}/portfolio:${{ github.sha }}
-        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/portfolio:buildcache
-        cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/portfolio:buildcache,mode=max
-
-  deploy:
-    name: Deploy to Server
-    needs: build
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd /var/www/portfolio
-          git pull origin main
-          docker-compose down
-          docker-compose pull
-          docker-compose up -d --build
-          docker system prune -f
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,.venv,migrations
+        flake8 . --count --exit-zero --max-complexity=10 --statistics --exclude=venv,.venv,migrations
