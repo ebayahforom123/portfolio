@@ -6,7 +6,7 @@ from django.views.generic import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
-from django.http import JsonResponse, Http404, HttpResponseRedirect
+from django.http import JsonResponse, Http404, HttpResponse, HttpResponse, HttpResponseRedirect
 from django.db.models import Count, Q, F
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
