@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'django_cleanup',
     'django_resized',
-    'taggit',
+    # 'taggit',
      'captcha',
     # Local apps
     'apps.portfolio.apps.PortfolioConfig',
