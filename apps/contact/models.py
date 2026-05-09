@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator, EmailValidator
 from django.utils.translation import gettext_lazy as _
-from ckeditor.fields import RichTextField
+# from ckeditor.fields import TextField
 import uuid
 import json
 
@@ -448,7 +448,7 @@ class ContactInfo(models.Model):
         verbose_name=_('Auto-reply Subject'),
         default='Thank you for your message'
     )
-    auto_reply_message = RichTextField(
+    auto_reply_message = models.TextField(
         blank=True,
         verbose_name=_('Auto-reply Message'),
         help_text=_('Leave empty to use default message')
@@ -555,7 +555,7 @@ class FAQ(models.Model):
 
     question = models.CharField(max_length=300, verbose_name=_('Question'))
     slug = models.SlugField(max_length=350, unique=True, blank=True)
-    answer = RichTextField(verbose_name=_('Answer'))
+    answer = models.TextField(verbose_name=_('Answer'))
 
     # Categorization
     CATEGORY_CHOICES = [

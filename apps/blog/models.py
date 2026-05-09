@@ -6,7 +6,7 @@ from django.utils.html import strip_tags
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django_resized import ResizedImageField
-from ckeditor.fields import RichTextField
+# from ckeditor.fields import TextField
 from taggit.managers import TaggableManager
 import uuid
 import re
@@ -188,7 +188,7 @@ class Post(models.Model):
         max_length=500,
         help_text='Short summary for listings'
     )
-    content = RichTextField()
+    content = models.TextField()
 
     # Media
     featured_image = ResizedImageField(

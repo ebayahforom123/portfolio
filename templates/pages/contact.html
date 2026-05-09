@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Contact - {{ site_settings.site_name|default:"My Portfolio" }}{% endblock %}
+{% block title %}Contact - {{ site_settings.site_name|default:"Kiros" }}{% endblock %}
 
 {% block content %}
 <section class="section-padding">
@@ -15,7 +15,6 @@
                 <div class="card p-4 h-100">
                     <h4 class="mb-4">Contact Information</h4>
                     
-                    {% if site_settings.email %}
                     <div class="d-flex mb-3">
                         <div class="me-3">
                             <div class="bg-primary bg-opacity-10 rounded-circle p-3">
@@ -24,12 +23,10 @@
                         </div>
                         <div>
                             <h6 class="mb-1">Email</h6>
-                            <a href="mailto:{{ site_settings.email }}" class="text-muted">{{ site_settings.email }}</a>
+                            <a href="mailto:ebayahforom@gmail.com" class="text-muted">ebayahforom@gmail.com</a>
                         </div>
                     </div>
-                    {% endif %}
                     
-                    {% if site_settings.phone %}
                     <div class="d-flex mb-3">
                         <div class="me-3">
                             <div class="bg-success bg-opacity-10 rounded-circle p-3">
@@ -38,12 +35,10 @@
                         </div>
                         <div>
                             <h6 class="mb-1">Phone</h6>
-                            <a href="tel:{{ site_settings.phone }}" class="text-muted">{{ site_settings.phone }}</a>
+                            <a href="tel:+251989475440" class="text-muted">+251 98 947 5440</a>
                         </div>
                     </div>
-                    {% endif %}
                     
-                    {% if site_settings.location %}
                     <div class="d-flex mb-3">
                         <div class="me-3">
                             <div class="bg-warning bg-opacity-10 rounded-circle p-3">
@@ -52,29 +47,16 @@
                         </div>
                         <div>
                             <h6 class="mb-1">Location</h6>
-                            <p class="text-muted mb-0">{{ site_settings.location }}</p>
+                            <p class="text-muted mb-0">Ethiopia</p>
                         </div>
                     </div>
-                    {% endif %}
                     
                     <div class="mt-4">
                         <h6 class="mb-3">Follow Me</h6>
                         <div class="d-flex gap-2">
-                            {% if site_settings.github %}
-                            <a href="{{ site_settings.github }}" class="btn btn-outline-dark btn-sm rounded-circle" style="width:40px;height:40px;" target="_blank">
+                            <a href="https://github.com/ebayahforom123" class="btn btn-outline-dark btn-sm rounded-circle" style="width:40px;height:40px;" target="_blank">
                                 <i class="fab fa-github"></i>
                             </a>
-                            {% endif %}
-                            {% if site_settings.linkedin %}
-                            <a href="{{ site_settings.linkedin }}" class="btn btn-outline-primary btn-sm rounded-circle" style="width:40px;height:40px;" target="_blank">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                            {% endif %}
-                            {% if site_settings.twitter %}
-                            <a href="{{ site_settings.twitter }}" class="btn btn-outline-info btn-sm rounded-circle" style="width:40px;height:40px;" target="_blank">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -83,7 +65,17 @@
             <div class="col-lg-7" data-aos="fade-left">
                 <div class="card p-4">
                     <h4 class="mb-4">Send Me a Message</h4>
-                    <form method="post" action="{% url 'portfolio:contact' %}">
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="POST" action="{% url 'contact:contact' %}">
                         {% csrf_token %}
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -95,8 +87,8 @@
                                 <input type="email" name="email" class="form-control rounded-pill" required placeholder="your@email.com">
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Subject *</label>
-                                <input type="text" name="subject" class="form-control rounded-pill" required placeholder="Subject">
+                                <label class="form-label">Subject</label>
+                                <input type="text" name="subject" class="form-control rounded-pill" placeholder="Subject">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Message *</label>
